@@ -1,0 +1,90 @@
+{
+  "name": "つながる — ことばのSNS",
+  "short_name": "つながる",
+  "description": "ことばが宇宙に浮かんでつながるビジュアルSNS。投稿するとマップ上に表示され、同じカテゴリの投稿と自動でつながります。",
+  "start_url": "/snsmap.html",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#07070f",
+  "theme_color": "#c8853a",
+  "lang": "ja",
+  "dir": "ltr",
+  "categories": ["social", "communication"],
+  "icons": [
+    {
+      "src": "/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "つながるのマップビュー"
+    },
+    {
+      "src": "/screenshot-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "デスクトップビュー"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "投稿する",
+      "short_name": "投稿",
+      "description": "ことばを宇宙に置く",
+      "url": "/snsmap.html?action=post",
+      "icons": [{"src": "/icon-96.png", "sizes": "96x96"}]
+    },
+    {
+      "name": "マップを見る",
+      "short_name": "マップ",
+      "description": "つながりのマップを見る",
+      "url": "/snsmap.html",
+      "icons": [{"src": "/icon-96.png", "sizes": "96x96"}]
+    }
+  ],
+  "share_target": {
+    "action": "/snsmap.html",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "related_applications": [],
+  "prefer_related_applications": false
+}

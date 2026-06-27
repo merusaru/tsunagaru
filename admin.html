@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>つながる — 管理画面</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+:root{--bg:#07070f;--s1:#0f0f1c;--s2:#161624;--bd:#23233a;--text:#eae6de;--tmid:#8888a8;--tdim:#44445a;--ac:#c8853a;--ac2:#e09548;--danger:#ef476f;--warn:#f4a261;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP','Inter',sans-serif;min-height:100vh}
+
+/* LOGIN */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+#login-box{background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:32px;width:100%;max-width:340px}
+#login-box h1{font-size:18px;color:var(--ac);margin-bottom:4px}
+#login-box p{font-size:12px;color:var(--tmid);margin-bottom:24px}
+.inp{width:100%;background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:10px 12px;color:var(--text);font-size:14px;font-family:inherit;outline:none;margin-bottom:10px}
+.inp:focus{border-color:var(--ac)}
+.btn-primary{width:100%;padding:10px;background:var(--ac);border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit}
+.btn-primary:hover{background:var(--ac2)}
+
+/* DASHBOARD */
+#dashboard{display:none;padding:16px;max-width:900px;margin:0 auto}
+
+/* HEADER */
+.adm-hdr{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--bd)}
+.adm-hdr h1{font-size:16px;color:var(--ac);flex:1}
+.adm-hdr .badge{background:var(--s2);border:1px solid var(--bd);border-radius:99px;padding:4px 12px;font-size:11px;color:var(--tmid)}
+.btn-sm{padding:6px 14px;border-radius:8px;border:1px solid var(--bd);background:var(--s2);color:var(--tmid);font-size:12px;cursor:pointer;font-family:inherit}
+.btn-sm:hover{border-color:var(--ac);color:var(--ac)}
+.btn-danger{border-color:rgba(239,71,111,.3);color:var(--danger)}
+.btn-danger:hover{background:rgba(239,71,111,.1);border-color:var(--danger)}
+
+/* TABS */
+.adm-tabs{display:flex;gap:4px;margin-bottom:16px;background:var(--s1);border-radius:10px;padding:4px}
+.adm-tab{flex:1;padding:8px;border:none;border-radius:8px;background:transparent;color:var(--tmid);font-size:13px;cursor:pointer;font-family:inherit;transition:all .2s}
+.adm-tab.on{background:var(--s2);color:var(--text);font-weight:500}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px}
+.stat-card{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:16px}
+.stat-card .label{font-size:10px;color:var(--tmid);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.stat-card .value{font-size:24px;font-weight:700;color:var(--ac)}
+.stat-card .sub{font-size:11px;color:var(--tdim);margin-top:3px}
+
+/* SECTION */
+.section{margin-bottom:20px}
+.section-title{font-size:11px;color:var(--tmid);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.count-badge{background:var(--danger);color:#fff;border-radius:99px;padding:1px 7px;font-size:10px}
+
+/* CARD */
+.item-card{background:var(--s1);border:1px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:8px;position:relative}
+.item-card.reported{border-color:rgba(239,71,111,.4)}
+.item-card .item-text{font-size:14px;color:var(--text);margin-bottom:6px;word-break:break-all}
+.item-card .item-meta{font-size:11px;color:var(--tmid);display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.item-cat{padding:2px 8px;border-radius:99px;font-size:10px;font-weight:500}
+.item-actions{display:flex;gap:6px;margin-top:10px}
+.report-reason{background:rgba(239,71,111,.1);border:1px solid rgba(239,71,111,.2);border-radius:6px;padding:6px 10px;font-size:11px;color:var(--danger);margin-bottom:8px}
+
+/* EMPTY */
+.empty{text-align:center;padding:40px;color:var(--tdim);font-size:13px}
+.empty .icon{font-size:32px;margin-bottom:8px}
+
+/* LOADING */
+.loading{text-align:center;padding:40px;color:var(--tmid);font-size:13px}
+
+/* POSTS LIST */
+.post-filter{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.filter-btn{padding:4px 12px;border-radius:99px;border:1px solid var(--bd);background:transparent;color:var(--tmid);font-size:11px;cursor:pointer}
+.filter-btn.on{background:var(--ac);border-color:var(--ac);color:#fff}
+
+/* TOAST */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--s2);border:1px solid var(--bd);color:var(--text);padding:8px 18px;border-radius:99px;font-size:12px;opacity:0;pointer-events:none;z-index:50;transition:opacity .3s;white-space:nowrap}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div id="login-box">
+    <h1>つながる 管理画面</h1>
+    <p>管理者のみアクセス可能です</p>
+    <input class="inp" type="password" id="admin-key" placeholder="管理者キーを入力" autocomplete="off">
+    <button class="btn-primary" id="login-btn">ログイン</button>
+    <p style="font-size:10px;color:var(--tdim);margin-top:12px;text-align:center">
+      キー未設定の場合はFirebase設定後に<br>ADMIN_KEY変数を変更してください
+    </p>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <div class="adm-hdr">
+    <h1>✦ つながる 管理画面</h1>
+    <span class="badge" id="fb-status">接続中...</span>
+    <button class="btn-sm" id="refresh-btn">↻ 更新</button>
+    <button class="btn-sm btn-danger" id="logout-btn">ログアウト</button>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="label">総投稿数</div>
+      <div class="value" id="s-posts">-</div>
+      <div class="sub">デモ含む</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">通報件数</div>
+      <div class="value" id="s-reports" style="color:var(--danger)">-</div>
+      <div class="sub">未処理</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">接続数</div>
+      <div class="value" id="s-edges">-</div>
+      <div class="sub">エッジ総数</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">ユーザー数</div>
+      <div class="value" id="s-users">-</div>
+      <div class="sub">登録ユーザー</div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="adm-tabs">
+    <button class="adm-tab on" data-tab="reports">通報 <span id="report-badge"></span></button>
+    <button class="adm-tab" data-tab="posts">投稿一覧</button>
+    <button class="adm-tab" data-tab="users">ユーザー</button>
+    <button class="adm-tab" data-tab="edges">接続</button>
+  </div>
+
+  <!-- REPORTS TAB -->
+  <div id="tab-reports">
+    <div class="section">
+      <div class="section-title">未処理の通報 <span class="count-badge" id="report-count">0</span></div>
+      <div id="reports-list"><div class="loading">読み込み中...</div></div>
+    </div>
+    <div class="section">
+      <div class="section-title">処理済み通報</div>
+      <div id="resolved-list"><div class="empty"><div class="icon">✓</div>処理済みはありません</div></div>
+    </div>
+  </div>
+
+  <!-- POSTS TAB -->
+  <div id="tab-posts" style="display:none">
+    <div class="post-filter">
+      <button class="filter-btn on" data-cat="all">すべて</button>
+    </div>
+    <div id="posts-list"><div class="loading">読み込み中...</div></div>
+  </div>
+
+  <!-- USERS TAB -->
+  <div id="tab-users" style="display:none">
+    <div id="users-list"><div class="loading">読み込み中...</div></div>
+  </div>
+
+  <!-- EDGES TAB -->
+  <div id="tab-edges" style="display:none">
+    <div id="edges-list"><div class="loading">読み込み中...</div></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ╔══════════════════════════════════════╗
+// ║  🔑 管理者キー — 変更してください   ║
+// ╚══════════════════════════════════════╝
+var ADMIN_KEY = 'tsunagaru-admin-2026';
+
+// ╔══════════════════════════════════════╗
+// ║  🔥 Firebase Config（本体と同じ）   ║
+// ╚══════════════════════════════════════╝
+var FB_CONFIG = null;
+// var FB_CONFIG = { apiKey:"...", authDomain:"...", databaseURL:"...", projectId:"..." };
+
+// ── STATE ──────────────────────────────
+var db = null;
+var allPosts = {}, allReports = {}, allEdges = {}, allUsers = {};
+var currentTab = 'reports';
+var postFilter = 'all';
+var isLoggedIn = false;
+
+// ── PAL ────────────────────────────────
+var PAL=['#c8853a','#7b68ee','#06d6a0','#ef476f','#48cae4','#f4a261','#9d4edd','#52b788'];
+var cmap={},ci=0;
+function cc(c){if(!c)c='未分類';if(!cmap[c]){cmap[c]=PAL[ci++%PAL.length];}return cmap[c];}
+
+// ── LOGIN ──────────────────────────────
+document.getElementById('login-btn').onclick = login;
+document.getElementById('admin-key').addEventListener('keydown', function(e){
+  if(e.key==='Enter') login();
+});
+function login(){
+  var key = document.getElementById('admin-key').value.trim();
+  if(key !== ADMIN_KEY){ toast('キーが違います'); return; }
+  isLoggedIn = true;
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  initFirebase();
+}
+document.getElementById('logout-btn').onclick = function(){
+  isLoggedIn = false;
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('admin-key').value = '';
+};
+
+// ── TABS ───────────────────────────────
+document.querySelectorAll('.adm-tab').forEach(function(t){
+  t.onclick = function(){
+    currentTab = t.dataset.tab;
+    document.querySelectorAll('.adm-tab').forEach(function(x){x.classList.remove('on');});
+    t.classList.add('on');
+    ['reports','posts','users','edges'].forEach(function(id){
+      document.getElementById('tab-'+id).style.display = id===currentTab?'block':'none';
+    });
+    renderCurrentTab();
+  };
+});
+
+// ── FIREBASE ───────────────────────────
+function initFirebase(){
+  if(!FB_CONFIG){
+    document.getElementById('fb-status').textContent = 'Firebase未設定';
+    document.getElementById('fb-status').style.color = 'var(--danger)';
+    // デモモード
+    loadDemo();
+    return;
+  }
+  var urls = [
+    'https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js',
+    'https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js',
+  ];
+  var i=0;
+  function next(){
+    if(i>=urls.length){onFBReady();return;}
+    var s=document.createElement('script');s.src=urls[i++];s.onload=next;document.head.appendChild(s);
+  }
+  next();
+}
+
+function onFBReady(){
+  try{firebase.initializeApp(FB_CONFIG);}catch(e){}
+  db = firebase.database();
+  document.getElementById('fb-status').textContent = 'Firebase接続済';
+  document.getElementById('fb-status').style.color = 'var(--ac)';
+
+  // Listen all data
+  db.ref('posts').on('value', function(snap){
+    allPosts = snap.val() || {};
+    updateStats();
+    renderCurrentTab();
+  });
+  db.ref('reports').on('value', function(snap){
+    allReports = snap.val() || {};
+    var count = Object.values(allReports).filter(function(r){return !r.resolved;}).length;
+    document.getElementById('report-count').textContent = count;
+    document.getElementById('report-badge').textContent = count > 0 ? ' ('+count+')' : '';
+    document.getElementById('s-reports').textContent = count;
+    renderCurrentTab();
+  });
+  db.ref('edges').on('value', function(snap){
+    allEdges = snap.val() || {};
+    document.getElementById('s-edges').textContent = Object.keys(allEdges).length;
+    renderCurrentTab();
+  });
+  db.ref('users').on('value', function(snap){
+    allUsers = snap.val() || {};
+    document.getElementById('s-users').textContent = Object.keys(allUsers).length;
+    renderCurrentTab();
+  });
+}
+
+function loadDemo(){
+  // Firebase未設定時のデモデータ
+  allPosts = {
+    p1:{text:'おはよう',cat:'あいさつ',ts:Date.now()-3600000,nick:'テストユーザー',reportCount:0},
+    p2:{text:'スパムです',cat:'ニュース',ts:Date.now()-7200000,nick:'',reportCount:3},
+    p3:{text:'今日も雨',cat:'天気',ts:Date.now()-86400000,nick:'めるさる',reportCount:0},
+  };
+  allReports = {
+    r1:{postId:'p2',text:'スパムです',reason:'spam',note:'明らかにスパム',ts:Date.now()-3600000,resolved:false},
+    r2:{postId:'p2',text:'スパムです',reason:'inappropriate',note:'',ts:Date.now()-1800000,resolved:false},
+  };
+  allEdges = {e1:{s:'p1',t:'p3'},e2:{s:'p1',t:'p2'}};
+  allUsers = {uid1:{nick:'めるさる'},uid2:{nick:'テストユーザー'}};
+  updateStats();
+  renderCurrentTab();
+}
+
+// ── STATS ──────────────────────────────
+function updateStats(){
+  document.getElementById('s-posts').textContent = Object.keys(allPosts).length;
+}
+
+// ── RENDER ─────────────────────────────
+function renderCurrentTab(){
+  if(currentTab==='reports') renderReports();
+  else if(currentTab==='posts') renderPosts();
+  else if(currentTab==='users') renderUsers();
+  else if(currentTab==='edges') renderEdges();
+}
+
+// REPORTS
+function renderReports(){
+  var pending = Object.entries(allReports).filter(function(e){return !e[1].resolved;});
+  var resolved = Object.entries(allReports).filter(function(e){return e[1].resolved;});
+
+  var rl = document.getElementById('reports-list');
+  document.getElementById('report-count').textContent = pending.length;
+
+  if(!pending.length){
+    rl.innerHTML = '<div class="empty"><div class="icon">✓</div>通報はありません</div>';
+  } else {
+    rl.innerHTML = '';
+    pending.sort(function(a,b){return (b[1].ts||0)-(a[1].ts||0);}).forEach(function(entry){
+      var id=entry[0],r=entry[1];
+      var post = allPosts[r.postId] || {};
+      var card = document.createElement('div');
+      card.className = 'item-card reported';
+      card.innerHTML =
+        '<div class="report-reason">'+reasonLabel(r.reason)+(r.note?' — '+r.note:'')+'</div>'+
+        '<div class="item-text">'+(r.text||'（投稿取得失敗）')+'</div>'+
+        '<div class="item-meta">'+
+          '<span class="item-cat" style="background:'+cc(post.cat||'')+'22;color:'+cc(post.cat||'')+'">'+(post.cat||'不明')+'</span>'+
+          '<span>'+(post.nick||'匿名')+'</span>'+
+          '<span>'+new Date(r.ts).toLocaleString('ja-JP')+'</span>'+
+        '</div>'+
+        '<div class="item-actions"></div>';
+      var actions = card.querySelector('.item-actions');
+      // 投稿削除ボタン
+      var delBtn = document.createElement('button');
+      delBtn.className = 'btn-sm btn-danger';
+      delBtn.textContent = '投稿を削除';
+      delBtn.onclick = function(){
+        if(!confirm('「'+r.text+'」を削除しますか？つながりも削除されます。')) return;
+        deletePost(r.postId);
+        resolveReport(id);
+      };
+      actions.appendChild(delBtn);
+      // 無視ボタン
+      var ignBtn = document.createElement('button');
+      ignBtn.className = 'btn-sm';
+      ignBtn.textContent = '問題なし（無視）';
+      ignBtn.onclick = function(){ resolveReport(id); };
+      actions.appendChild(ignBtn);
+      rl.appendChild(card);
+    });
+  }
+
+  var rrl = document.getElementById('resolved-list');
+  if(!resolved.length){
+    rrl.innerHTML = '<div class="empty"><div class="icon">✓</div>処理済みはありません</div>';
+  } else {
+    rrl.innerHTML = '';
+    resolved.slice(-10).reverse().forEach(function(entry){
+      var id=entry[0],r=entry[1];
+      var card = document.createElement('div');
+      card.className = 'item-card';
+      card.style.opacity = '.5';
+      card.innerHTML =
+        '<div class="item-text" style="font-size:12px;color:var(--tmid)">'+(r.text||'')+'</div>'+
+        '<div class="item-meta">'+reasonLabel(r.reason)+' · '+new Date(r.ts).toLocaleString('ja-JP')+'</div>';
+      rrl.appendChild(card);
+    });
+  }
+}
+
+// POSTS
+function renderPosts(){
+  var posts = Object.entries(allPosts);
+  var cats = ['all'];
+  posts.forEach(function(e){if(e[1].cat&&cats.indexOf(e[1].cat)<0)cats.push(e[1].cat);});
+
+  var pf = document.querySelector('.post-filter');
+  pf.innerHTML = '';
+  cats.forEach(function(cat){
+    var btn = document.createElement('button');
+    btn.className = 'filter-btn'+(postFilter===cat?' on':'');
+    btn.textContent = cat==='all'?'すべて':cat;
+    btn.onclick = function(){postFilter=cat;renderPosts();};
+    pf.appendChild(btn);
+  });
+
+  var filtered = postFilter==='all'?posts:posts.filter(function(e){return e[1].cat===postFilter;});
+  filtered.sort(function(a,b){return (b[1].ts||0)-(a[1].ts||0);});
+
+  var pl = document.getElementById('posts-list');
+  if(!filtered.length){pl.innerHTML='<div class="empty"><div class="icon">✦</div>投稿がありません</div>';return;}
+  pl.innerHTML='';
+  filtered.forEach(function(entry){
+    var id=entry[0],p=entry[1];
+    var card = document.createElement('div');
+    card.className = 'item-card'+(p.reportCount>=3?' reported':'');
+    card.innerHTML =
+      '<div class="item-text">'+p.text+(p.url?'<a href="'+p.url+'" target="_blank" style="margin-left:6px;font-size:11px;color:var(--ac)">🔗</a>':'')+'</div>'+
+      '<div class="item-meta">'+
+        '<span class="item-cat" style="background:'+cc(p.cat||'')+'22;color:'+cc(p.cat||'')+'">'+(p.cat||'未分類')+'</span>'+
+        '<span>'+(p.nick||'匿名')+'</span>'+
+        '<span>'+new Date(p.ts).toLocaleString('ja-JP')+'</span>'+
+        (p.reportCount?'<span style="color:var(--danger)">通報×'+p.reportCount+'</span>':'')+''+
+      '</div>'+
+      '<div class="item-actions"></div>';
+    var actions = card.querySelector('.item-actions');
+    var delBtn = document.createElement('button');
+    delBtn.className = 'btn-sm btn-danger';
+    delBtn.textContent = '削除';
+    delBtn.onclick = function(){if(confirm('削除しますか？'))deletePost(id);};
+    actions.appendChild(delBtn);
+    pl.appendChild(card);
+  });
+}
+
+// USERS
+function renderUsers(){
+  var users = Object.entries(allUsers);
+  var ul = document.getElementById('users-list');
+  if(!users.length){ul.innerHTML='<div class="empty"><div class="icon">👤</div>ユーザーがいません</div>';return;}
+  ul.innerHTML='';
+  users.forEach(function(entry){
+    var id=entry[0],u=entry[1];
+    var card = document.createElement('div');
+    card.className = 'item-card';
+    card.innerHTML =
+      '<div class="item-text">'+(u.nick||'匿名ユーザー')+'</div>'+
+      '<div class="item-meta">'+
+        '<span>UID: '+id.slice(0,16)+'...</span>'+
+        (u.provider?'<span>'+u.provider+'</span>':'')+
+      '</div>'+
+      '<div class="item-actions"></div>';
+    var actions = card.querySelector('.item-actions');
+    var banBtn = document.createElement('button');
+    banBtn.className = 'btn-sm btn-danger';
+    banBtn.textContent = 'BANする（全投稿削除）';
+    banBtn.onclick = function(){
+      if(!confirm('UID: '+id+' を BANしますか？全投稿が削除されます。')) return;
+      banUser(id);
+    };
+    actions.appendChild(banBtn);
+    ul.appendChild(card);
+  });
+}
+
+// EDGES
+function renderEdges(){
+  var edges = Object.entries(allEdges);
+  var el = document.getElementById('edges-list');
+  if(!edges.length){el.innerHTML='<div class="empty"><div class="icon">⋯</div>接続がありません</div>';return;}
+  el.innerHTML='';
+  edges.slice(0,100).forEach(function(entry){
+    var id=entry[0],e=entry[1];
+    var sPost = allPosts[e.s]||{};
+    var tPost = allPosts[e.t]||{};
+    var card = document.createElement('div');
+    card.className = 'item-card';
+    card.style.fontSize = '12px';
+    card.innerHTML =
+      '<div style="display:flex;align-items:center;gap:8px">'+
+        '<span style="color:var(--ac)">'+(sPost.text||e.s.slice(0,8))+'</span>'+
+        '<span style="color:var(--tdim)">──✦──</span>'+
+        '<span style="color:var(--ac)">'+(tPost.text||e.t.slice(0,8))+'</span>'+
+      '</div>'+
+      '<div class="item-actions"></div>';
+    var actions = card.querySelector('.item-actions');
+    var delBtn = document.createElement('button');
+    delBtn.className = 'btn-sm btn-danger';
+    delBtn.textContent = '削除';
+    delBtn.onclick = function(){deleteEdge(id);};
+    actions.appendChild(delBtn);
+    el.appendChild(card);
+  });
+  if(edges.length>100){
+    var note = document.createElement('div');
+    note.className='empty';note.textContent='（100件まで表示）';el.appendChild(note);
+  }
+}
+
+// ── ACTIONS ────────────────────────────
+function deletePost(postId){
+  if(db){
+    db.ref('posts/'+postId).remove();
+    // エッジも削除
+    Object.entries(allEdges).forEach(function(entry){
+      var eid=entry[0],e=entry[1];
+      if(e.s===postId||e.t===postId) db.ref('edges/'+eid).remove();
+    });
+  } else {
+    delete allPosts[postId];
+    Object.entries(allEdges).forEach(function(entry){
+      var eid=entry[0],e=entry[1];
+      if(e.s===postId||e.t===postId) delete allEdges[eid];
+    });
+    updateStats();renderCurrentTab();
+  }
+  toast('投稿を削除しました');
+}
+
+function deleteEdge(edgeId){
+  if(db){db.ref('edges/'+edgeId).remove();}
+  else{delete allEdges[edgeId];renderCurrentTab();}
+  toast('接続を削除しました');
+}
+
+function resolveReport(reportId){
+  if(db){db.ref('reports/'+reportId+'/resolved').set(true);}
+  else{if(allReports[reportId])allReports[reportId].resolved=true;renderCurrentTab();}
+  toast('通報を処理しました');
+}
+
+function banUser(uid){
+  // そのUIDの全投稿を削除
+  Object.entries(allPosts).forEach(function(entry){
+    var pid=entry[0],p=entry[1];
+    if(p.uid===uid) deletePost(pid);
+  });
+  if(db){db.ref('banned/'+uid).set({ts:Date.now()});}
+  toast('BANしました。全投稿を削除しました。');
+}
+
+// ── REFRESH ────────────────────────────
+document.getElementById('refresh-btn').onclick = function(){
+  toast('更新しました');renderCurrentTab();
+};
+
+// ── UTILS ──────────────────────────────
+function reasonLabel(r){
+  var labels={spam:'🚫 スパム・宣伝',inappropriate:'⚠️ 不適切',harassment:'😤 嫌がらせ・差別',other:'📝 その他'};
+  return labels[r]||r;
+}
+
+var tT;
+function toast(msg){
+  var el=document.getElementById('toast');el.textContent=msg;el.style.opacity='1';
+  clearTimeout(tT);tT=setTimeout(function(){el.style.opacity='0';},2400);
+}
+</script>
+</body>
+</html>

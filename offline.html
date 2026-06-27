@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>オフライン — つながる</title>
+<style>
+:root{--bg:#07070f;--text:#eae6de;--ac:#c8853a;--s1:#0f0f1c;--bd:#23233a}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;height:100dvh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;text-align:center;padding:24px}
+canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+.content{position:relative;z-index:1}
+h1{font-size:18px;color:var(--ac);margin-bottom:8px}
+p{font-size:13px;color:#8888a8;line-height:1.7;max-width:280px}
+.btn{margin-top:20px;padding:10px 24px;background:var(--ac);border:none;border-radius:99px;color:#fff;font-size:14px;cursor:pointer;font-family:inherit}
+.btn:hover{opacity:.85}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="content">
+  <div style="font-size:48px;margin-bottom:12px">✦</div>
+  <h1>つながる — オフライン</h1>
+  <p>インターネットに接続されていません。<br>接続が回復したら自動的に再接続します。</p>
+  <button class="btn" onclick="location.reload()">再試行する</button>
+</div>
+<script>
+// 星のアニメーション
+const cvs=document.getElementById('c'),ctx=cvs.getContext('2d');
+cvs.width=window.innerWidth;cvs.height=window.innerHeight;
+const stars=Array.from({length:150},()=>({x:Math.random()*cvs.width,y:Math.random()*cvs.height,r:Math.random()*1.2,a:Math.random()}));
+function draw(){ctx.clearRect(0,0,cvs.width,cvs.height);stars.forEach(s=>{s.a=0.1+0.5*Math.abs(Math.sin(Date.now()/1000+s.x));ctx.globalAlpha=s.a;ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle='rgba(200,133,58,0.6)';ctx.fill();});ctx.globalAlpha=1;requestAnimationFrame(draw);}
+draw();
+</script>
+</body>
+</html>
