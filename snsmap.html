@@ -46,9 +46,6 @@
 <!-- ═══ パフォーマンス（LCP対策）═══ -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="dns-prefetch" href="https://www.gstatic.com">
-<link rel="dns-prefetch" href="https://firebaseio.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Inter:wght@400;500;600&display=swap">
 
 <!-- ═══ 構造化データ @graph（Google・AI検索両対応）═══ -->
 <script type="application/ld+json">
@@ -156,7 +153,8 @@
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{height:100dvh}
 body{width:100%;height:100dvh;overflow:hidden;background:var(--bg);
-  font-family:'Noto Sans JP','Inter',sans-serif;transition:background .3s}
+  font-family:'Noto Sans JP','Inter',-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',sans-serif;
+  transition:background .3s}
 button{font-family:inherit}
 #cvs{position:fixed;inset:0;touch-action:none;display:block}
 #pcvs{position:fixed;inset:0;pointer-events:none;z-index:5;display:block}
@@ -612,13 +610,43 @@ var notifOn=ls.get('notifOn',false);
 var reportTarget=null,reportReason='';
 var cu=null,userNick=ls.get('userNick',''),userAvatar='';
 
-// ── KEYBOARD FIX (visualViewport API 2025+) ────
+// ── KEYBOARD FIX (iOS Safari対応) ────────────
+var kbdOpen=false;
 if(window.visualViewport){
   window.visualViewport.addEventListener('resize',function(){
     var kh=window.innerHeight-window.visualViewport.height;
-    document.getElementById('panel').style.bottom=(kh>80?kh+8:56)+'px';
+    var panel=document.getElementById('panel');
+    if(kh>100){
+      // キーボードが出た
+      kbdOpen=true;
+      panel.style.position='fixed';
+      panel.style.bottom=(kh+8)+'px';
+      panel.style.left='50%';
+      panel.style.transform='translateX(-50%)';
+    } else {
+      // キーボードが閉じた
+      kbdOpen=false;
+      panel.style.position='absolute';
+      panel.style.bottom='56px';
+      panel.style.left='50%';
+      panel.style.transform='translateX(-50%)';
+    }
   });
 }
+
+// 入力欄タップ時にCanvasのタッチを無効化してフリーズ防止
+document.getElementById('ptxt').addEventListener('focus',function(){
+  cvs.style.pointerEvents='none';
+});
+document.getElementById('ptxt').addEventListener('blur',function(){
+  cvs.style.pointerEvents='auto';
+});
+document.getElementById('purl').addEventListener('focus',function(){
+  cvs.style.pointerEvents='none';
+});
+document.getElementById('purl').addEventListener('blur',function(){
+  cvs.style.pointerEvents='auto';
+});
 
 // ── CAMERA ─────────────────────────────────────
 var cam={x:0,y:0,z:1};
@@ -817,7 +845,16 @@ function drawMinimap(){
   vp.style.width=Math.min(mw,Math.max(4,(br.x-tl.x)*sc))+'px';vp.style.height=Math.min(mh,Math.max(4,(br.y-tl.y)*sc))+'px';
 }
 
-function loop(){try{physics();draw();tickP();}catch(er){console.error(er);}requestAnimationFrame(loop);}
+function loop(){
+  try{
+    if(!kbdOpen){
+      physics();
+      draw();
+    }
+    tickP();
+  }catch(er){console.error(er);}
+  requestAnimationFrame(loop);
+}
 loop();
 
 // ── HIT TEST ───────────────────────────────────
@@ -847,11 +884,6 @@ function handleConn(p,sx,sy){if(!connSrc){connSrc=p;burst(sx,sy,cc(p.cat),8);doc
 function finishConn(p){var eid='e'+(pid++);edges.push({id:eid,s:connSrc.id,t:p.id});var ms=w2s(connSrc.x,connSrc.y),mt=w2s(p.x,p.y);burst((ms.x+mt.x)/2,(ms.y+mt.y)/2,cc(connSrc.cat),14);toast('✦ つながった！');fbSet('edges/'+eid,{s:connSrc.id,t:p.id});if(notifOn&&isMyPost(p)&&connSrc.nick){showNotif('✦ あなたの星座が広がりました — '+connSrc.nick+'がつながりました');}resetConn();}
 function resetConn(){connSrc=null;connDragPt=null;document.getElementById('connhint').style.display='none';if(mode==='connect'){mode='view';document.querySelectorAll('.mbtn').forEach(function(b){b.classList.remove('on');});document.querySelector('[data-mode="view"]').classList.add('on');}}
 
-// ── ZOOM ───────────────────────────────────────
-document.getElementById('zin').onclick=function(){doZoom(1.25,W/2,H/2);};
-document.getElementById('zout').onclick=function(){doZoom(.8,W/2,H/2);};
-document.getElementById('zfit').onclick=function(){if(!posts.length)return;var minx=1e9,miny=1e9,maxx=-1e9,maxy=-1e9;for(var i=0;i<posts.length;i++){var p=posts[i];minx=Math.min(minx,p.x-p.r);miny=Math.min(miny,p.y-p.r);maxx=Math.max(maxx,p.x+p.r);maxy=Math.max(maxy,p.y+p.r);}var pad=60;minx-=pad;miny-=pad;maxx+=pad;maxy+=pad;var nz=Math.min(4,Math.min(W/(maxx-minx),H/(maxy-miny)));cam.z=nz;cam.x=W/2-(minx+(maxx-minx)/2)*nz;cam.y=H/2-(miny+(maxy-miny)/2)*nz;};
-
 // ── POST ───────────────────────────────────────
 function isMyPost(p){return myIds.indexOf(p.id)>=0||(cu&&p.uid&&p.uid===cu.uid);}
 function addPost(text,url,cat){
@@ -873,8 +905,6 @@ function doDel(p){var np=[],ne=[];for(var i=0;i<posts.length;i++){if(posts[i].id
 // ── REPORT ─────────────────────────────────────
 window.closeReport=function(){document.getElementById('reportModal').classList.remove('show');reportTarget=null;reportReason='';document.getElementById('reportNote').value='';document.querySelectorAll('.r-reason').forEach(function(b){b.classList.remove('sel');});}
 function openReport(p){reportTarget=p;document.getElementById('reportModal').classList.add('show');document.querySelectorAll('.r-reason').forEach(function(b){b.onclick=function(){document.querySelectorAll('.r-reason').forEach(function(x){x.classList.remove('sel');});b.classList.add('sel');reportReason=b.dataset.r;};});}
-document.getElementById('reportSend').onclick=function(){if(!reportTarget)return;if(!reportReason){toast('理由を選んでください');return;}var note=document.getElementById('reportNote').value.trim();var rid='r'+(pid++);fbSet('reports/'+rid,{postId:reportTarget.id,text:reportTarget.text,reason:reportReason,note:note,ts:Date.now(),reporterUid:cu?cu.uid:''});reportTarget.reportCount=(reportTarget.reportCount||0)+1;if(window.fbDB)window.fbDB.ref('posts/'+reportTarget.id+'/reportCount').set(reportTarget.reportCount);toast('通報しました。確認します。');closeReport();};
-
 // ── POPUP ──────────────────────────────────────
 var openP=null;
 function showPopup(p,sy){
@@ -944,6 +974,114 @@ function rebuildCatChips(){
 }
 var tT=null;function toast(msg){var el=document.getElementById('toast');el.textContent=msg;el.style.opacity='1';clearTimeout(tT);tT=setTimeout(function(){el.style.opacity='0';},2400);}
 
+// ── UI EVENTS ──────────────────────────────────
+// ncok
+document.getElementById('ncok').onclick=function(){
+  var v=document.getElementById('ncinp').value.trim();
+  if(v&&userCats.indexOf(v)<0){userCats.push(v);cc(v);}
+  if(v)selCat=v;
+  document.getElementById('ncinp').value='';
+  document.getElementById('ncwrap').classList.remove('show');
+  rebuildCatChips();
+};
+document.getElementById('ncinp').addEventListener('keydown',function(e){
+  if(e.key==='Enter')document.getElementById('ncok').click();
+});
+// タブ
+document.querySelectorAll('.ptab').forEach(function(b){
+  b.onclick=function(){
+    document.querySelectorAll('.ptab').forEach(function(x){x.classList.remove('on');});
+    b.classList.add('on');
+    if(b.dataset.tab==='link')document.getElementById('urlwrap').classList.add('show');
+    else document.getElementById('urlwrap').classList.remove('show');
+  };
+});
+// 投稿ボタン
+document.getElementById('psub').onclick=function(){
+  addPost(document.getElementById('ptxt').value,document.getElementById('purl').value,selCat);
+  document.getElementById('ptxt').value='';document.getElementById('purl').value='';
+};
+document.getElementById('ptxt').addEventListener('keydown',function(e){
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();document.getElementById('psub').click();}
+});
+// モードボタン
+document.querySelectorAll('.mbtn').forEach(function(b){
+  b.onclick=function(){
+    mode=b.dataset.mode;connSrc=null;connDragPt=null;
+    document.getElementById('connhint').style.display='none';
+    document.querySelectorAll('.mbtn').forEach(function(x){x.classList.remove('on');});
+    b.classList.add('on');
+    if(mode==='connect')toast('ことばを長押し or タップして接続開始');
+    if(mode==='delete')toast('自分の投稿（●マーク）をタップで削除');
+  };
+});
+// 検索
+document.getElementById('searchbtn').onclick=function(){
+  var sb=document.getElementById('searchbar'),fb=document.getElementById('fbar');
+  var show=!sb.classList.contains('show');
+  sb.classList.toggle('show',show);fb.classList.toggle('shifted',show);
+  if(show)document.getElementById('sinp').focus();
+  else{searchQ='';document.getElementById('sinp').value='';}
+};
+document.getElementById('sinp').addEventListener('input',function(e){searchQ=e.target.value.trim();});
+document.getElementById('sclr').onclick=function(){
+  searchQ='';document.getElementById('sinp').value='';
+  document.getElementById('searchbar').classList.remove('show');
+  document.getElementById('fbar').classList.remove('shifted');
+};
+// シェア
+document.getElementById('sharebtn').onclick=function(){
+  window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent('ことばのSNS「つながる」に参加してみた 🌌\nことばが宇宙に浮かんでつながるSNS！\n#つながるSNS\nhttps://merusaru.github.io/tsunagaru/'),'_blank');
+};
+// テーマ
+document.getElementById('themebtn').onclick=function(){setTheme(!dark);};
+// ズーム
+document.getElementById('zin').onclick=function(){doZoom(1.25,W/2,H/2);};
+document.getElementById('zout').onclick=function(){doZoom(.8,W/2,H/2);};
+document.getElementById('zfit').onclick=function(){
+  if(!posts.length)return;
+  var minx=1e9,miny=1e9,maxx=-1e9,maxy=-1e9;
+  for(var i=0;i<posts.length;i++){var p=posts[i];minx=Math.min(minx,p.x-p.r);miny=Math.min(miny,p.y-p.r);maxx=Math.max(maxx,p.x+p.r);maxy=Math.max(maxy,p.y+p.r);}
+  var pad=60;minx-=pad;miny-=pad;maxx+=pad;maxy+=pad;
+  var nz=Math.min(4,Math.min(W/(maxx-minx),H/(maxy-miny)));
+  cam.z=nz;cam.x=W/2-(minx+(maxx-minx)/2)*nz;cam.y=H/2-(miny+(maxy-miny)/2)*nz;
+};
+// ポップアップ閉じる
+document.querySelector('.ppcls').onclick=closePopup;
+// 通報送信
+document.getElementById('reportSend').onclick=function(){
+  if(!reportTarget)return;if(!reportReason){toast('理由を選んでください');return;}
+  var note=document.getElementById('reportNote').value.trim();
+  var rid='r'+(pid++);
+  fbSet('reports/'+rid,{postId:reportTarget.id,text:reportTarget.text,reason:reportReason,note:note,ts:Date.now(),reporterUid:cu?cu.uid:''});
+  reportTarget.reportCount=(reportTarget.reportCount||0)+1;
+  if(window.fbDB)window.fbDB.ref('posts/'+reportTarget.id+'/reportCount').set(reportTarget.reportCount);
+  toast('通報しました。確認します。');closeReport();
+};
+// ニックネーム保存
+document.getElementById('pfSave').onclick=function(){
+  userNick=document.getElementById('pfNick').value.trim();ls.set('userNick',userNick);
+  if(cu&&window.fbDB)window.fbDB.ref('users/'+cu.uid).update({nick:userNick,avatar:userAvatar});
+  toast('ニックネームを保存しました');closeProfile();
+};
+// ログアウト
+document.getElementById('pfSignout').onclick=function(){
+  if(window.fbAuth)window.fbAuth.signOut().then(function(){cu=null;userNick='';userAvatar='';updateAvatarUI();toast('ログアウトしました');});
+  closeProfile();
+};
+// PWAインストール
+document.getElementById('pwa-install').onclick=function(){
+  if(!deferredPrompt)return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(function(choice){
+    if(choice.outcome==='accepted')toast('✦ ホーム画面に追加しました！');
+    deferredPrompt=null;document.getElementById('pwa-banner').classList.remove('show');
+  });
+};
+document.getElementById('pwa-dismiss').onclick=function(){
+  document.getElementById('pwa-banner').classList.remove('show');ls.set('pwaDismissed',true);
+};
+
 // NOTIF
 function showNotif(msg){document.getElementById('nbadge').style.display='block';toast(msg);}
 window.toggleNotif=function(){notifOn=!notifOn;ls.set('notifOn',notifOn);document.getElementById('notifToggle').classList.toggle('on',notifOn);toast(notifOn?'✦ 通知をONにしました':'通知をOFFにしました');};
@@ -964,8 +1102,6 @@ window.openProfile=function(){
 window.closeProfile=function(){document.getElementById('profileModal').classList.remove('show');}
 function getProvLabel(){if(!cu)return '未連携';if(cu.isAnonymous)return '匿名';var pi=cu.providerData;if(!pi||!pi.length)return '連携済';var labels={'google.com':'Google連携済','twitter.com':'X（Twitter）連携済','github.com':'GitHub連携済'};return labels[pi[0].providerId]||'連携済';}
 function buildLinkArea(){var area=document.getElementById('pfLinkArea');area.innerHTML='';if(!cu||cu.isAnonymous)return;var linked={};if(cu.providerData)cu.providerData.forEach(function(p){linked[p.providerId]=true;});[{id:'google.com',label:'Google を追加連携'},{id:'twitter.com',label:'X（Twitter）を追加連携'},{id:'github.com',label:'GitHub を追加連携'}].forEach(function(pv){if(linked[pv.id])return;var btn=document.createElement('button');btn.className='pf-lnk';btn.textContent=pv.label;btn.onclick=function(){linkProvider(pv.id);};area.appendChild(btn);});}
-document.getElementById('pfSave').onclick=function(){userNick=document.getElementById('pfNick').value.trim();ls.set('userNick',userNick);if(cu&&window.fbDB)window.fbDB.ref('users/'+cu.uid).update({nick:userNick,avatar:userAvatar});toast('ニックネームを保存しました');closeProfile();};
-document.getElementById('pfSignout').onclick=function(){if(window.fbAuth)window.fbAuth.signOut().then(function(){cu=null;userNick='';userAvatar='';updateAvatarUI();toast('ログアウトしました');});closeProfile();};
 function updateAvatarUI(){var el=document.getElementById('avatar'),ic=document.getElementById('avicon');if(cu&&!cu.isAnonymous){el.classList.add('linked');if(cu.photoURL){ic.innerHTML='<img src="'+cu.photoURL+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';userAvatar=cu.photoURL;}else{ic.textContent=(userNick||cu.displayName||'U').slice(0,1).toUpperCase();}}else{el.classList.remove('linked');ic.textContent='👤';}}
 
 // ── FIREBASE ───────────────────────────────
@@ -1052,7 +1188,18 @@ function initDemo(){
 
 var aid=ls.get('anonId','');if(!aid){ls.set('anonId','a'+Date.now());}
 
-// 初期化（即時関数内なのでスコープ問題なし）
+// フォントを非同期読み込み（失敗してもスクリプトは止まらない）
+(function(){
+  try{
+    var l=document.createElement('link');
+    l.rel='stylesheet';
+    l.href='https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Inter:wght@400;500;600&display=swap';
+    l.onerror=function(){console.warn('[Font] Google Fonts blocked, using system fonts');};
+    document.head.appendChild(l);
+  }catch(e){}
+})();
+
+// 初期化
 rsz();
 initDemo();
 initFB();
