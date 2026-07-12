@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- 背景の宇宙グラデーション -->
+    <radialGradient id="bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#1e1e30"/>
+      <stop offset="60%" stop-color="#0f0f1c"/>
+      <stop offset="100%" stop-color="#07070f"/>
+    </radialGradient>
+    <!-- 中央ノードの控えめグロー -->
+    <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#c8853a" stop-opacity="0.55"/>
+      <stop offset="45%" stop-color="#c8853a" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#c8853a" stop-opacity="0"/>
+    </radialGradient>
+    <!-- 中央ノードのメタリック塗り -->
+    <radialGradient id="centerFill" cx="35%" cy="35%" r="70%">
+      <stop offset="0%" stop-color="#2a2a48"/>
+      <stop offset="100%" stop-color="#0d0d1c"/>
+    </radialGradient>
+    <!-- 周辺ノードの塗り -->
+    <radialGradient id="nodeFill" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#242440"/>
+      <stop offset="100%" stop-color="#0d0d1c"/>
+    </radialGradient>
+    <!-- 各色のグロー用フィルター -->
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="512" height="512" fill="url(#bg)"/>
+
+  <!-- 星屑 -->
+  <g fill="#b4a082">
+    <circle cx="42"  cy="88"  r="1.4" opacity="0.7"/>
+    <circle cx="88"  cy="42"  r="1.0" opacity="0.5"/>
+    <circle cx="140" cy="70"  r="0.8" opacity="0.4"/>
+    <circle cx="220" cy="36"  r="1.2" opacity="0.6"/>
+    <circle cx="330" cy="48"  r="1.5" opacity="0.7"/>
+    <circle cx="420" cy="60"  r="1.0" opacity="0.5"/>
+    <circle cx="470" cy="118" r="1.3" opacity="0.6"/>
+    <circle cx="486" cy="220" r="1.1" opacity="0.5"/>
+    <circle cx="466" cy="330" r="1.4" opacity="0.65"/>
+    <circle cx="430" cy="430" r="1.2" opacity="0.55"/>
+    <circle cx="360" cy="472" r="1.3" opacity="0.6"/>
+    <circle cx="256" cy="486" r="1.5" opacity="0.7"/>
+    <circle cx="150" cy="466" r="1.1" opacity="0.5"/>
+    <circle cx="60"  cy="426" r="1.4" opacity="0.65"/>
+    <circle cx="30"  cy="320" r="1.2" opacity="0.55"/>
+    <circle cx="20"  cy="200" r="1.0" opacity="0.5"/>
+    <circle cx="70"  cy="256" r="1.3" opacity="0.6"/>
+    <circle cx="122" cy="122" r="0.9" opacity="0.45"/>
+    <circle cx="400" cy="150" r="1.0" opacity="0.5"/>
+    <circle cx="450" cy="380" r="1.4" opacity="0.65"/>
+    <circle cx="130" cy="390" r="1.1" opacity="0.5"/>
+    <circle cx="380" cy="130" r="1.2" opacity="0.55"/>
+  </g>
+
+  <!-- 中央のオーラ (奥) -->
+  <circle cx="256" cy="256" r="150" fill="url(#centerGlow)"/>
+
+  <!-- 星座線: 中央から放射 -->
+  <g stroke="#c8853a" fill="none" stroke-linecap="round" stroke-opacity="0.55">
+    <line x1="256" y1="256" x2="256" y2="108" stroke-width="2.5"/>
+    <line x1="256" y1="256" x2="399" y2="203" stroke-width="2.5"/>
+    <line x1="256" y1="256" x2="344" y2="382" stroke-width="2.5"/>
+    <line x1="256" y1="256" x2="168" y2="382" stroke-width="2.5"/>
+    <line x1="256" y1="256" x2="113" y2="203" stroke-width="2.5"/>
+  </g>
+
+  <!-- 星座線: 隣接ノード同士 (五角形) -->
+  <g stroke="#c8853a" fill="none" stroke-linecap="round" stroke-opacity="0.3">
+    <line x1="256" y1="108" x2="399" y2="203" stroke-width="1.8"/>
+    <line x1="399" y1="203" x2="344" y2="382" stroke-width="1.8"/>
+    <line x1="344" y1="382" x2="168" y2="382" stroke-width="1.8"/>
+    <line x1="168" y1="382" x2="113" y2="203" stroke-width="1.8"/>
+    <line x1="113" y1="203" x2="256" y2="108" stroke-width="1.8"/>
+  </g>
+
+  <!-- 光る中点パルス (エッジ上) -->
+  <g filter="url(#softGlow)">
+    <circle cx="256" cy="182" r="3.5" fill="#c8853a" opacity="0.9"/>
+    <circle cx="327" cy="229" r="3.5" fill="#7b68ee" opacity="0.9"/>
+    <circle cx="300" cy="319" r="3.5" fill="#06d6a0" opacity="0.9"/>
+    <circle cx="212" cy="319" r="3.5" fill="#48cae4" opacity="0.9"/>
+    <circle cx="184" cy="229" r="3.5" fill="#ef476f" opacity="0.9"/>
+  </g>
+
+  <!-- 周辺ノード (5つ) -->
+  <g>
+    <!-- 上 (accent orange) -->
+    <circle cx="256" cy="108" r="26" fill="url(#nodeFill)" stroke="#c8853a" stroke-width="3.5"/>
+    <circle cx="256" cy="108" r="8"  fill="#c8853a" opacity="0.9"/>
+    <!-- 右上 (purple) -->
+    <circle cx="399" cy="203" r="26" fill="url(#nodeFill)" stroke="#7b68ee" stroke-width="3.5"/>
+    <circle cx="399" cy="203" r="8"  fill="#7b68ee" opacity="0.9"/>
+    <!-- 右下 (green) -->
+    <circle cx="344" cy="382" r="26" fill="url(#nodeFill)" stroke="#06d6a0" stroke-width="3.5"/>
+    <circle cx="344" cy="382" r="8"  fill="#06d6a0" opacity="0.9"/>
+    <!-- 左下 (cyan) -->
+    <circle cx="168" cy="382" r="26" fill="url(#nodeFill)" stroke="#48cae4" stroke-width="3.5"/>
+    <circle cx="168" cy="382" r="8"  fill="#48cae4" opacity="0.9"/>
+    <!-- 左上 (pink) -->
+    <circle cx="113" cy="203" r="26" fill="url(#nodeFill)" stroke="#ef476f" stroke-width="3.5"/>
+    <circle cx="113" cy="203" r="8"  fill="#ef476f" opacity="0.9"/>
+  </g>
+
+  <!-- 中央ノード (メイン) -->
+  <circle cx="256" cy="256" r="82" fill="none" stroke="#c8853a" stroke-width="1.5" stroke-opacity="0.45"/>
+  <circle cx="256" cy="256" r="72" fill="url(#centerFill)" stroke="#c8853a" stroke-width="5"/>
+
+  <!-- 中央 ✦ (きらめき) -->
+  <g fill="#fff5e6" transform="translate(256 256)">
+    <polygon points="0,-58 12,0 0,58 -12,0"/>
+    <polygon points="-58,0 0,-12 58,0 0,12"/>
+    <polygon points="22,-22 4,-4 -22,22 -4,4"/>
+    <polygon points="-22,-22 -4,-4 22,22 4,4"/>
+    <circle cx="0" cy="0" r="4" fill="#c8853a"/>
+  </g>
+</svg>

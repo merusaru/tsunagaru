@@ -1,6 +1,139 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja" data-theme="dark">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>つながる — ことばが宇宙でつながるビジュアルSNS｜完全無料・登録不要</title>
+<meta name="description" content="つながるは、投稿がマップ上にノードとして表示され、同じカテゴリの投稿が自動で線でつながるビジュアルSNS。マインドマップのようにことばの関係性が見える。完全無料・登録不要・アプリ不要。">
+<meta name="keywords" content="ビジュアルSNS,マインドマップSNS,グラフSNS,つながる,ことばのSNS,集合知,無料SNS,登録不要SNS,匿名SNS,PWA">
+<meta name="author" content="めるさる">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+<link rel="canonical" href="https://merusaru.github.io/tsunagaru/">
+<link rel="alternate" hreflang="ja" href="https://merusaru.github.io/tsunagaru/">
+<link rel="alternate" hreflang="x-default" href="https://merusaru.github.io/tsunagaru/">
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#07070f" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#c8853a" media="(prefers-color-scheme: light)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="つながる">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+
+<!-- OGP -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://merusaru.github.io/tsunagaru/">
+<meta property="og:title" content="つながる — ことばが宇宙でつながるビジュアルSNS">
+<meta property="og:description" content="投稿がマップ上にノードとして浮かび、同じカテゴリの投稿と自動でつながる新しいSNS。マインドマップのようにことばの関係が見える。完全無料・登録不要。">
+<meta property="og:image" content="https://merusaru.github.io/tsunagaru/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="つながる">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@melsal">
+<meta name="twitter:creator" content="@melsal">
+<meta name="twitter:title" content="つながる — ことばが宇宙でつながるビジュアルSNS">
+<meta name="twitter:description" content="マインドマップのようにことばの関係が見える新しいSNS。完全無料・登録不要。">
+<meta name="twitter:image" content="https://merusaru.github.io/tsunagaru/ogp.png">
+
+<!-- AI エージェント向け -->
+<link rel="alternate" type="text/plain" title="llms.txt" href="https://merusaru.github.io/tsunagaru/llms.txt">
+
+<!-- 構造化データ: シンプル版 (詳細版は snsmap.html に配置) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://merusaru.github.io/tsunagaru/#website",
+      "url": "https://merusaru.github.io/tsunagaru/",
+      "name": "つながる",
+      "description": "ことばが宇宙でつながるビジュアルSNS",
+      "inLanguage": "ja",
+      "publisher": {"@id": "https://merusaru.github.io/tsunagaru/#org"},
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://merusaru.github.io/tsunagaru/snsmap.html?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://merusaru.github.io/tsunagaru/#org",
+      "name": "めるさる",
+      "url": "https://merusaru.github.io/tsunagaru/",
+      "logo": "https://merusaru.github.io/tsunagaru/icon-512.png",
+      "sameAs": ["https://twitter.com/melsal", "https://github.com/merusaru"]
+    }
+  ]
+}
+</script>
+
+<!-- 500ms 後に本体へ遷移。プログレッシブエンハンスメント: JS無効でも meta refresh でフォールバック -->
 <meta http-equiv="refresh" content="0;url=snsmap.html">
+<link rel="preload" href="snsmap.html" as="document">
+
+<style>
+:root{--bg:#07070f;--s1:#0f0f1c;--bd:#23233a;--text:#eae6de;--tmid:#8888a8;--tdim:#44445a;--ac:#c8853a;--ac2:#e09548;}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP','Inter',-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',sans-serif;display:flex;align-items:center;justify-content:center;padding:20px;text-align:center;overflow:hidden;position:relative}
+.stars{position:fixed;inset:0;pointer-events:none}
+.star{position:absolute;background:#b4a082;border-radius:50%;opacity:.4}
+.wrap{position:relative;z-index:1;max-width:500px}
+h1{font-size:32px;color:var(--ac);margin-bottom:8px;font-weight:700}
+h1 small{display:block;font-size:11px;color:var(--tdim);letter-spacing:.2em;font-weight:300;margin-top:4px}
+.lead{font-size:14px;color:var(--tmid);line-height:1.9;margin:24px 0}
+.spin{width:24px;height:24px;border:2px solid var(--bd);border-top-color:var(--ac);border-radius:50%;animation:spin .8s linear infinite;display:inline-block;margin:16px 0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.btn{display:inline-block;padding:12px 32px;background:var(--ac);color:#fff;border:none;border-radius:99px;font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;transition:all .2s;font-family:inherit;margin-top:12px;}
+.btn:hover{background:var(--ac2)}
+.sr-only:not(:focus):not(:active){clip-path:inset(50%);height:1px;overflow:hidden;position:absolute;white-space:nowrap;width:1px}
+</style>
 </head>
+<body>
+<div class="stars" aria-hidden="true"></div>
+
+<!-- AI・検索エンジン向け: 本文コンテンツ (visually hidden) -->
+<main class="sr-only">
+  <h1>つながる — ことばが宇宙でつながるビジュアルSNS</h1>
+  <p>つながる（Tsunagaru）は、投稿がマップ上にノード（点）として表示され、同じカテゴリの投稿が自動でエッジ（線）でつながるビジュアルSNSです。マインドマップのようにことばとことばの関係性が視覚化され、同じことばを複数人が投稿すると集合ノード（×N人が言った）として表示されます。完全無料・登録不要・アプリ不要でスマートフォンとPC両方で動作します。</p>
+  <p>開発者: めるさる（埼玉県川口市を拠点とするフリーランスプログラミング講師・個人開発者）</p>
+  <p><a href="snsmap.html">マップビューへ進む</a></p>
+</main>
+
+<!-- 目に見える: 遷移中の演出 -->
+<div class="wrap" aria-hidden="true">
+  <h1>つながる<small>KOTOBA NO SNS</small></h1>
+  <p class="lead">✦ 宇宙が広がっています…</p>
+  <div class="spin"></div>
+  <p><a href="snsmap.html" class="btn">マップを開く</a></p>
+</div>
+
+<script>
+// 星を散らす
+(function(){
+  var s=document.querySelector('.stars');
+  for(var i=0;i<80;i++){
+    var e=document.createElement('div');
+    e.className='star';
+    e.style.left=Math.random()*100+'%';
+    e.style.top=Math.random()*100+'%';
+    e.style.width=e.style.height=(Math.random()*2+.5)+'px';
+    e.style.opacity=Math.random()*.6+.1;
+    s.appendChild(e);
+  }
+})();
+// JavaScript が有効な場合は即座に遷移
+setTimeout(function(){ location.replace('snsmap.html'); }, 200);
+</script>
+</body>
 </html>

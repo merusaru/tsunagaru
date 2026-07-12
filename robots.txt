@@ -1,41 +1,88 @@
+# ═══════════════════════════════════════════════
 # つながる — ことばのSNS
-# robots.txt
+# robots.txt (2026年最新: AI検索対応)
+# ═══════════════════════════════════════════════
 
-# 通常のクローラー（全許可）
+# ═══ 通常のクローラー（全許可）═══
 User-agent: *
 Allow: /
-Disallow: /admin
+Disallow: /admin.html
+Disallow: /admin/
+Crawl-delay: 1
 
 # ═══ Google ═══
 User-agent: Googlebot
+Allow: /
+Disallow: /admin.html
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Googlebot-Mobile
 Allow: /
 
 # Google AI Overview 対策（インデックスは許可、AI学習はブロック）
 User-agent: Google-Extended
 Disallow: /
 
+# ═══ Bing / Microsoft ═══
+User-agent: Bingbot
+Allow: /
+Disallow: /admin.html
+
+User-agent: BingPreview
+Allow: /
+
 # ═══ AI 検索ボット（許可 — 引用・回答エンジン用）═══
-# Perplexityの検索クロール → 許可
+
+# Perplexity の検索クロール → 許可
 User-agent: PerplexityBot
 Allow: /
+Disallow: /admin.html
 
-# ChatGPT検索クロール → 許可
-User-agent: OAI-SearchBot
+User-agent: Perplexity-User
 Allow: /
 
-# ユーザーがChatGPTに貼ったURLのフェッチ → 許可
+# ChatGPT 検索クロール → 許可
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /admin.html
+
+# ユーザーが ChatGPT に貼った URL のフェッチ → 許可
 User-agent: ChatGPT-User
 Allow: /
 
-# Claude検索クロール → 許可
+# Claude 検索クロール → 許可
 User-agent: ClaudeBot
 Allow: /
+Disallow: /admin.html
+
 User-agent: Claude-SearchBot
 Allow: /
+
 User-agent: Claude-User
 Allow: /
 
-# ═══ AI 学習ボット（ブロック — コンテンツ無断学習防止）═══
+User-agent: anthropic-ai
+Allow: /
+
+# You.com 検索
+User-agent: YouBot
+Allow: /
+
+# Amazon (Alexa/Rufus)
+User-agent: Amazonbot
+Allow: /
+
+# Cohere
+User-agent: cohere-ai
+Allow: /
+
+# DuckDuckGo
+User-agent: DuckDuckBot
+Allow: /
+
+# ═══ AI 学習ボット（ブロック — 無断学習防止）═══
 User-agent: GPTBot
 Disallow: /
 
@@ -45,11 +92,41 @@ Disallow: /
 User-agent: Meta-ExternalAgent
 Disallow: /
 
+User-agent: Meta-ExternalFetcher
+Disallow: /
+
+User-agent: FacebookBot
+Disallow: /
+
 User-agent: Bytespider
 Disallow: /
 
 User-agent: Applebot-Extended
 Disallow: /
 
-# Sitemap
-Sitemap: https://your-domain.com/sitemap.xml
+User-agent: Diffbot
+Disallow: /
+
+User-agent: ImagesiftBot
+Disallow: /
+
+User-agent: Omgili
+Disallow: /
+
+User-agent: PetalBot
+Disallow: /
+
+User-agent: Kangaroo Bot
+Disallow: /
+
+User-agent: TimpiBot
+Disallow: /
+
+User-agent: cohere-training-data-crawler
+Disallow: /
+
+# ═══ Sitemap ═══
+Sitemap: https://merusaru.github.io/tsunagaru/sitemap.xml
+
+# ═══ AI エージェント向けサイト概要 ═══
+# llms.txt: https://merusaru.github.io/tsunagaru/llms.txt

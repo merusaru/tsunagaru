@@ -1,11 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0">
+
+  <!-- ═══ トップページ ═══ -->
   <url>
-    <loc>https://your-domain.com/</loc>
-    <lastmod>2026-06-22</lastmod>
+    <loc>https://merusaru.github.io/tsunagaru/</loc>
+    <lastmod>2026-07-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="ja" href="https://your-domain.com/"/>
+    <mobile:mobile/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://merusaru.github.io/tsunagaru/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://merusaru.github.io/tsunagaru/"/>
+    <image:image>
+      <image:loc>https://merusaru.github.io/tsunagaru/ogp.png</image:loc>
+      <image:title>つながる — ことばのSNS</image:title>
+      <image:caption>ことばが宇宙に浮かんでつながるビジュアルSNS</image:caption>
+    </image:image>
   </url>
+
+  <!-- ═══ マップページ本体 ═══ -->
+  <url>
+    <loc>https://merusaru.github.io/tsunagaru/snsmap.html</loc>
+    <lastmod>2026-07-04</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <mobile:mobile/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://merusaru.github.io/tsunagaru/snsmap.html"/>
+    <image:image>
+      <image:loc>https://merusaru.github.io/tsunagaru/ogp.png</image:loc>
+      <image:title>つながる マップビュー</image:title>
+    </image:image>
+  </url>
+
 </urlset>

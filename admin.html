@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>つながる — 管理画面</title>
-<meta name="robots" content="noindex, nofollow">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="referrer" content="no-referrer">
 <style>
 :root{--bg:#07070f;--s1:#0f0f1c;--s2:#161624;--bd:#23233a;--text:#eae6de;--tmid:#8888a8;--tdim:#44445a;--ac:#c8853a;--ac2:#e09548;--danger:#ef476f;--warn:#f4a261;}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -167,13 +168,21 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP','Inter',s
 // ╔══════════════════════════════════════╗
 // ║  🔑 管理者キー — 変更してください   ║
 // ╚══════════════════════════════════════╝
-var ADMIN_KEY = 'tsunagaru-admin-2026';
+var ADMIN_KEY = 'tsunagaru-admin-2026-CHANGE-ME';  // ⚠️ 必ず強度の高いパスワードに変更してください
 
 // ╔══════════════════════════════════════╗
 // ║  🔥 Firebase Config（本体と同じ）   ║
 // ╚══════════════════════════════════════╝
 var FB_CONFIG = null;
-// var FB_CONFIG = { apiKey:"...", authDomain:"...", databaseURL:"...", projectId:"..." };
+// var FB_CONFIG = {
+//   apiKey:            "AIza...",
+//   authDomain:        "your-app.firebaseapp.com",
+//   databaseURL:       "https://your-app-default-rtdb.firebaseio.com",
+//   projectId:         "your-app",
+//   storageBucket:     "your-app.appspot.com",
+//   messagingSenderId: "123456789",
+//   appId:             "1:123...:web:abc..."
+// };
 
 // ── STATE ──────────────────────────────
 var db = null;

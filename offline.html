@@ -2,35 +2,84 @@
 <html lang="ja" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>オフライン — つながる</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#07070f">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
 <style>
-:root{--bg:#07070f;--text:#eae6de;--ac:#c8853a;--s1:#0f0f1c;--bd:#23233a}
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;height:100dvh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;text-align:center;padding:24px}
-canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
-.content{position:relative;z-index:1}
-h1{font-size:18px;color:var(--ac);margin-bottom:8px}
-p{font-size:13px;color:#8888a8;line-height:1.7;max-width:280px}
-.btn{margin-top:20px;padding:10px 24px;background:var(--ac);border:none;border-radius:99px;color:#fff;font-size:14px;cursor:pointer;font-family:inherit}
-.btn:hover{opacity:.85}
+:root{--bg:#07070f;--s1:#0f0f1c;--s2:#161624;--bd:#23233a;--text:#eae6de;--tmid:#8888a8;--tdim:#44445a;--ac:#c8853a;--ac2:#e09548;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP','Inter',-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',sans-serif;display:flex;align-items:center;justify-content:center;padding:20px;overflow:hidden;position:relative}
+
+/* 背景の星 */
+.stars{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.star{position:absolute;background:#b4a082;border-radius:50%;opacity:.4;animation:twinkle 3s infinite ease-in-out}
+@keyframes twinkle{0%,100%{opacity:.2}50%{opacity:.7}}
+
+.box{max-width:400px;text-align:center;position:relative;z-index:1}
+.icon-wrap{font-size:64px;margin-bottom:16px;display:inline-block;animation:float 4s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+h1{font-size:22px;color:var(--ac);margin-bottom:10px;font-weight:700}
+p{font-size:14px;color:var(--tmid);line-height:1.8;margin-bottom:24px}
+.hint{font-size:12px;color:var(--tdim);margin-bottom:20px;line-height:1.6}
+.btn{display:inline-block;padding:12px 28px;background:var(--ac);color:#fff;border:none;border-radius:99px;font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;transition:all .2s;font-family:inherit;min-width:200px;}
+.btn:hover,.btn:active{background:var(--ac2);transform:translateY(-1px)}
+.btn-outline{background:transparent;color:var(--tmid);border:1px solid var(--bd);margin-top:10px}
+.btn-outline:hover{color:var(--text);border-color:var(--ac)}
+.status{margin-top:20px;padding:10px 14px;background:var(--s1);border:1px solid var(--bd);border-radius:10px;font-size:11px;color:var(--tdim);display:inline-flex;align-items:center;gap:8px}
+.dot{width:8px;height:8px;border-radius:50%;background:#ef476f;animation:pulse 1.5s infinite}
+.dot.online{background:#06d6a0;animation:none}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 </style>
 </head>
 <body>
-<canvas id="c"></canvas>
-<div class="content">
-  <div style="font-size:48px;margin-bottom:12px">✦</div>
-  <h1>つながる — オフライン</h1>
-  <p>インターネットに接続されていません。<br>接続が回復したら自動的に再接続します。</p>
-  <button class="btn" onclick="location.reload()">再試行する</button>
+<div class="stars" aria-hidden="true"></div>
+<div class="box" role="main">
+  <div class="icon-wrap" aria-hidden="true">🌌</div>
+  <h1>オフラインです</h1>
+  <p>ネットワークにつながっていません。<br>宇宙は待っています ── 通信が戻ったら、また逢いましょう。</p>
+  <p class="hint">💡 一度読み込んだページはキャッシュから見られます。<br>接続が戻れば投稿も自動で反映されます。</p>
+  <a href="./snsmap.html" class="btn">再接続してマップを開く</a>
+  <br>
+  <button class="btn btn-outline" onclick="location.reload()">このページを再読み込み</button>
+  <div class="status">
+    <span class="dot" id="dot"></span>
+    <span id="stat">オフライン</span>
+  </div>
 </div>
+
 <script>
-// 星のアニメーション
-const cvs=document.getElementById('c'),ctx=cvs.getContext('2d');
-cvs.width=window.innerWidth;cvs.height=window.innerHeight;
-const stars=Array.from({length:150},()=>({x:Math.random()*cvs.width,y:Math.random()*cvs.height,r:Math.random()*1.2,a:Math.random()}));
-function draw(){ctx.clearRect(0,0,cvs.width,cvs.height);stars.forEach(s=>{s.a=0.1+0.5*Math.abs(Math.sin(Date.now()/1000+s.x));ctx.globalAlpha=s.a;ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle='rgba(200,133,58,0.6)';ctx.fill();});ctx.globalAlpha=1;requestAnimationFrame(draw);}
-draw();
+// 星を散らす
+(function(){
+  var s=document.querySelector('.stars');
+  for(var i=0;i<60;i++){
+    var e=document.createElement('div');
+    e.className='star';
+    e.style.left=Math.random()*100+'%';
+    e.style.top=Math.random()*100+'%';
+    e.style.width=e.style.height=(Math.random()*2+.5)+'px';
+    e.style.animationDelay=(Math.random()*3)+'s';
+    s.appendChild(e);
+  }
+})();
+// オンライン状態を監視
+function updateStatus(){
+  var dot=document.getElementById('dot'),stat=document.getElementById('stat');
+  if(navigator.onLine){
+    dot.classList.add('online');
+    stat.textContent='オンラインに戻りました！';
+    setTimeout(function(){location.href='./snsmap.html';},1200);
+  }else{
+    dot.classList.remove('online');
+    stat.textContent='オフライン';
+  }
+}
+window.addEventListener('online',updateStatus);
+window.addEventListener('offline',updateStatus);
+updateStatus();
 </script>
 </body>
 </html>
